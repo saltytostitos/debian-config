@@ -1,0 +1,118 @@
+clear
+echo "$(tput setaf 7)$(tput setab 1)  Select an app:  $(tput sgr0)"
+
+ALL_ARGUMENTS=""
+
+moreArgs () {
+	for arg in $1;
+	do
+		echo "$(tput setaf 0)$(tput setab 6)Enter value for: $arg $(tput sgr0)"
+		read -p "$arg: " input
+		if [ $arg == *"-" ]; then
+			ALL_ARGUMENTS="${ALL_ARGUMENTS} $arg"
+		fi
+		ALL_ARGUMENTS="${ALL_ARGUMENTS} $input"
+
+		if [ !$ALL_ARGUMENTS ]; then
+			tput setaf 1
+			echo "No arguments were provided for $arg"
+			main
+		fi
+	done
+
+
+}
+
+OPTIONS=("Bottom Monitor" "htop" "Fly.io" "Github Clone Repo" "mailsy" "mkcert" "nmap" "Pretty Ping" "Speed Test" "Get Weather" "quit")
+
+main () {
+tput setaf 3
+select i in "${OPTIONS[@]}"
+do
+	tput bold
+	tput setaf 3
+	case $i in
+		"Bottom Monitor")
+			btm
+			break
+			;;
+		"htop")
+			htop
+			break
+			;;
+		"Fly.io")
+			flyctl
+			tput setaf 1
+			echo 'NOT CONFIGURED -- MUST USE MANUALLY'
+			break
+			;;
+		"Github Clone Repo")
+			moreArgs "REPO_URL"
+			echo 'Calling: gh repo clone' $ALL_ARGUMENTS
+			gh repo clone $ALL_ARGUMENTS
+			break
+			;;
+		"mailsy")
+		clear
+		echo "$(tput setaf 7)$(tput setab 4)  Mailsy  $(tput sgr0)"
+		tput setaf 3
+		select mailsyOpt in Generate Fetch Delete "Get Info"
+		do
+			case $mailsyOpt in
+				Generate)
+					mailsy g
+					break
+					;;
+				Fetch)
+					mailsy m
+					break
+					;;
+				Delete)
+					mailsy d
+					break
+					;;
+				"Get Info")
+					mailsy me
+					break
+					;;
+			esac
+		done
+			break
+			;;
+		"mkcert")
+			moreArgs "HOST"
+			clear
+			mkcert $ALL_ARGUMENTS
+			break
+			;;
+		"nmap")
+			nmap
+			tput setaf 1
+			echo 'NOT CONFIGURED -- MUST USE MANUALLY'
+			break
+			;;
+		"Pretty Ping")
+			moreArgs "HOST"
+			echo "Calling: prettyping" $ALL_ARGUMENTS
+			prettyping $ALL_ARGUMENTS --nounicode --nolegend
+			break
+			;;
+		"Speed Test")
+			speedtest
+			break
+			;;
+		"Get Weather")
+			curl https://wttr.in/\?QFd
+			main
+			break
+			;;
+		"quit")
+		tput setaf 7
+			echo "Closed"
+			break
+			;;
+	esac
+done
+}
+
+main
