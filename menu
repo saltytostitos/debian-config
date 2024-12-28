@@ -3,6 +3,7 @@ echo "$(tput setaf 7)$(tput setab 1)  Select an app:  $(tput sgr0)"
 
 ALL_ARGUMENTS=""
 
+# Prompts based on list of strings. Required arguments. Will fail if no arguments are provided
 moreArgs () {
 	for arg in $1;
 	do

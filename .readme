@@ -1,0 +1,22 @@
+# Simple Bash Menu Script Using Select
+
+This menu is a first iteration of console apps I use. I will add more apps I use as I iterate.
+
+### Included menu items
+
+- btm
+- htop
+- flyctl
+- gh ```clone only```
+- mailsy ```[g,m,d,me]```
+- mkcert
+- nmap ```not yet configured```
+- prettyping
+- speedtest
+- wttr.in
+- quit
+
+### TODO
+
+[ ] Customize select menu
+[ ] Prompt additional parameters for nmap
