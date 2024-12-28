@@ -20,3 +20,19 @@ This menu is a first iteration of console apps I use. I will add more apps I use
 
 [ ] Customize select menu
 [ ] Prompt additional parameters for nmap
+
+
+### How to use
+
+1. Clone this repo
+2. Hard symlink to /bin -- I symlink to ~/.local/bin/menu
+   
+   ```ln -s [TARGETPATH]/menu [CLONEDPATH]/menu```
+
+3. Add execution permissions
+
+   ```chmod +x [TARGETPATH]/menu```
+
+4. Add to PATH
+
+    ```PATH=$PATH:[TARGETPATH]```
