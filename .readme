@@ -1,6 +1,10 @@
-# Simple Bash Menu Script Using Select
+# Debian Configurations
 
-This menu is a first iteration of console apps I use. I will add more apps I use as I iterate.
+- .config/
+- - nvim/
+- - kitty/
+- - Windsurf
+- menu
 
 ### Included menu items
 
