@@ -118,7 +118,7 @@ lt() {
   if [[ -n $* ]]; then
     cd $*
   fi
-  eza -a1l --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always
+  eza -a1lT -L 1 --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always
 }
 alias ls="eza -a1l --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always"
 alias cat="batcat"
