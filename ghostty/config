@@ -1,0 +1,15 @@
+font-family = Monaspace Radon
+theme = synthwaveAlpha
+cursor-color = 00ff00
+cursor-style = block
+shell-integration-features = no-cursor
+window-padding-color = background
+window-width = 160
+window-height = 50
+mouse-hide-while-typing = true
+macos-titlebar-style = hidden
+working-directory = users/saltytostitos/dev
+window-padding-x = 2
+window-padding-y = 2
+window-colorspace = "display-p3"
+mouse-scroll-multiplier = 1.5
