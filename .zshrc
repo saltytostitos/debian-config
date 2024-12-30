@@ -125,6 +125,7 @@ alias cat="batcat"
 alias fz="fzf --preview 'batcat {}'"
 alias ws="windsurf"
 alias code="windsurf"
+alias pdf="okular"
 multipull() {
   find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} pull \;
 }
@@ -134,3 +135,5 @@ multicheck() {
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+export PATH="/var/lib/flatpak:/opt/nvim-linux64/bin:/home/sean/.local/bin/:$PATH"
