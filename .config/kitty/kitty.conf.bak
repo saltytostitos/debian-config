@@ -2648,6 +2648,6 @@ editor vim
 
 
 # BEGIN_KITTY_THEME
-# Synth Wave '84
+# Argonaut
 include current-theme.conf
 # END_KITTY_THEME
