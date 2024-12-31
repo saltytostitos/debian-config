@@ -126,6 +126,7 @@ alias fz="fzf --preview 'batcat {}'"
 alias ws="windsurf"
 alias code="windsurf"
 alias pdf="okular"
+alias taze="pnpx taze@latest latest"
 multipull() {
   find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} pull \;
 }
@@ -138,3 +139,5 @@ multicheck() {
 
 export PATH="/var/lib/flatpak:/opt/nvim-linux64/bin:/home/sean/.local/bin/:$PATH"
 source ~/powerlevel10k/powerlevel10k.zsh-theme
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
