@@ -40,7 +40,6 @@ OPTIONS=(
   "Pretty Ping"
   "Speed Test"
   "Get Weather"
-  "quit"
 )
 main() {
   tput setaf 3
@@ -121,12 +120,8 @@ main() {
       main
       break
       ;;
-    "quit")
-      tput setaf 7
-      echo "Closed"
-      break
-      ;;
     esac
+    # TODO: if press g then quit -- it's late, implement later!
   done
 }
 
