@@ -141,3 +141,6 @@ export PATH="/var/lib/flatpak:/opt/nvim-linux64/bin:/home/sean/.local/bin/:$PATH
 source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# Added by Windsurf
+export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
