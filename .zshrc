@@ -121,10 +121,10 @@ lt() {
   eza -a1lT -L 1 --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always
 }
 alias ls="eza -a1l --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always"
-alias cat="batcat"
+alias cat="bat"
 alias fz="fzf --preview 'batcat {}'"
-alias ws="windsurf"
-alias code="windsurf"
+#alias ws="windsurf"
+#alias code="windsurf"
 alias pdf="okular"
 alias taze="pnpx taze@latest latest"
 multipull() {
@@ -140,7 +140,7 @@ multicheck() {
 export PATH="/var/lib/flatpak:/opt/nvim-linux64/bin:/home/sean/.local/bin/:$PATH"
 source ~/powerlevel10k/powerlevel10k.zsh-theme
 
-eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+#eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # Added by Windsurf
 export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
