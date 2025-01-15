@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 # vim: set filetype=bash :
 
 # Set emulation mode to be compatible with bash/ksh
@@ -42,11 +42,19 @@ OPTIONS=(
   "Get Weather"
 )
 main() {
-  tput setaf 3
-  select i in "${OPTIONS[@]}"; do
-    tput bold
-    tput setaf 3
-    case $i in
+
+  # print options in 1 column
+  for i in "${!OPTIONS[@]}"; do
+    echo "$(( $i + 1 ))) ${OPTIONS[$i]}"
+  done
+  echo "__________________"
+  echo "Enter the number of the app you want to run or press q to quit"
+
+  while read -p "#" -n 2 choice; do
+    if [ "$choice" == "q" ]; then
+      exit
+    else
+     case ${OPTIONS[$choice-1]} in
     "Bottom Monitor")
       btm
       break
@@ -121,8 +129,12 @@ main() {
       break
       ;;
     esac
-    # TODO: if press g then quit -- it's late, implement later!
+    fi
   done
+
+
+    # TODO: if press q then quit -- it's late, implement later!
+
 }
 
 main
