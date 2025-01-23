@@ -123,8 +123,8 @@ lt() {
 alias ls="eza -a1l --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always"
 alias cat="bat"
 alias fz="fzf --preview 'batcat {}'"
-#alias ws="windsurf"
-#alias code="windsurf"
+alias ws="windsurf"
+alias code="windsurf"
 alias pdf="okular"
 alias taze="pnpx taze@latest latest"
 multipull() {
@@ -144,3 +144,15 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 # Added by Windsurf
 export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
+
+# Yazi need this
+export EDITOR=nvim
+# Yazi y shorthand - will open Yazi and cd current directory when closing
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(command cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		builtin cd -- "$cwd"
+	fi
+	fm -f -- "$tmp"
+}
