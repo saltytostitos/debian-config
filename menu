@@ -40,12 +40,14 @@ OPTIONS=(
   "Pretty Ping"
   "Speed Test"
   "Get Weather"
+  "Yazi"
+  "Neo VIM"
 )
 main() {
 
   # print options in 1 column
   for i in "${!OPTIONS[@]}"; do
-    echo "$(( $i + 1 ))) ${OPTIONS[$i]}"
+    echo "$(($i + 1))) ${OPTIONS[$i]}"
   done
   echo "__________________"
   echo "Enter the number of the app you want to run or press q to quit"
@@ -54,86 +56,93 @@ main() {
     if [ "$choice" == "q" ]; then
       exit
     else
-     case ${OPTIONS[$choice-1]} in
-    "Bottom Monitor")
-      btm
-      break
-      ;;
-    "htop")
-      htop
-      break
-      ;;
-    "Fly.io")
-      flyctl
-      tput setaf 1
-      echo 'NOT CONFIGURED -- MUST USE MANUALLY'
-      break
-      ;;
-    "Github Clone Repo")
-      moreArgs "REPO_URL"
-      echo 'Calling: gh repo clone' $ALL_ARGUMENTS
-      gh repo clone $ALL_ARGUMENTS
-      break
-      ;;
-    "mailsy")
-      clear
-      echo "$(tput setaf 7)$(tput setab 4)  Mailsy  $(tput sgr0)"
-      tput setaf 3
-      select mailsyOpt in Generate Fetch Delete "Get Info"; do
-        case $mailsyOpt in
-        Generate)
-          mailsy g
-          break
-          ;;
-        Fetch)
-          mailsy m
-          break
-          ;;
-        Delete)
-          mailsy d
-          break
-          ;;
-        "Get Info")
-          mailsy me
-          break
-          ;;
-        esac
-      done
-      break
-      ;;
-    "mkcert")
-      moreArgs "HOST"
-      clear
-      mkcert $ALL_ARGUMENTS
-      break
-      ;;
-    "nmap")
-      nmap
-      tput setaf 1
-      echo 'NOT CONFIGURED -- MUST USE MANUALLY'
-      break
-      ;;
-    "Pretty Ping")
-      moreArgs "HOST"
-      echo "Calling: prettyping" $ALL_ARGUMENTS
-      prettyping $ALL_ARGUMENTS --nounicode --nolegend
-      break
-      ;;
-    "Speed Test")
-      speedtest
-      break
-      ;;
-    "Get Weather")
-      curl https://wttr.in/\?QFd
-      main
-      break
-      ;;
-    esac
+      case ${OPTIONS[$choice - 1]} in
+      "Bottom Monitor")
+        btm
+        break
+        ;;
+      "htop")
+        htop
+        break
+        ;;
+      "Fly.io")
+        flyctl
+        tput setaf 1
+        echo 'NOT CONFIGURED -- MUST USE MANUALLY'
+        break
+        ;;
+      "Github Clone Repo")
+        moreArgs "REPO_URL"
+        echo 'Calling: gh repo clone' $ALL_ARGUMENTS
+        gh repo clone $ALL_ARGUMENTS
+        break
+        ;;
+      "mailsy")
+        clear
+        echo "$(tput setaf 7)$(tput setab 4)  Mailsy  $(tput sgr0)"
+        tput setaf 3
+        select mailsyOpt in Generate Fetch Delete "Get Info"; do
+          case $mailsyOpt in
+          Generate)
+            mailsy g
+            break
+            ;;
+          Fetch)
+            mailsy m
+            break
+            ;;
+          Delete)
+            mailsy d
+            break
+            ;;
+          "Get Info")
+            mailsy me
+            break
+            ;;
+          esac
+        done
+        break
+        ;;
+      "mkcert")
+        moreArgs "HOST"
+        clear
+        mkcert $ALL_ARGUMENTS
+        break
+        ;;
+      "nmap")
+        nmap
+        tput setaf 1
+        echo 'NOT CONFIGURED -- MUST USE MANUALLY'
+        break
+        ;;
+      "Pretty Ping")
+        moreArgs "HOST"
+        echo "Calling: prettyping" $ALL_ARGUMENTS
+        prettyping $ALL_ARGUMENTS --nounicode --nolegend
+        break
+        ;;
+      "Speed Test")
+        speedtest
+        break
+        ;;
+      "Get Weather")
+        curl https://wttr.in/\?QFd
+        main
+        break
+        ;;
+      "Yazi")
+        yazi
+        break
+        ;;
+      "Neo VIM")
+        nvim
+        break
+        ;;
+      esac
     fi
   done
 
-
-    # TODO: if press q then quit -- it's late, implement later!
+  # TODO: if press q then quit -- it's late, implement later!
 
 }
 
