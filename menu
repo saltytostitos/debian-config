@@ -42,6 +42,7 @@ OPTIONS=(
   "Get Weather"
   "Yazi"
   "Neo VIM"
+  "NPM Package Analyzer"
 )
 main() {
 
@@ -136,6 +137,11 @@ main() {
         ;;
       "Neo VIM")
         nvim
+        break
+        ;;
+      "NPM Package Analyzer")
+        echo "Calling: node-modules-inspector"
+        pnpx node-modules-inspector
         break
         ;;
       esac
