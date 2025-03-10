@@ -124,7 +124,10 @@ alias ls="eza -a1l --git --no-user --no-permissions --no-time --icons=auto --gro
 alias cat="bat"
 alias fz="fzf --preview 'batcat {}'"
 alias ws="windsurf"
-alias code="windsurf"
+alias pi="pnpx node-modules-inspector@latest"
+# alias code="windsurf"
+alias code="code-insiders"
+alias ws="code-insiders"
 alias pdf="okular"
 alias taze="pnpx taze@latest latest"
 multipull() {
@@ -156,3 +159,11 @@ function y() {
 	fi
 	fm -f -- "$tmp"
 }
+
+# pnpm
+export PNPM_HOME="/Users/saltytostitos/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
