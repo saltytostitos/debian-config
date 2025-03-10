@@ -141,7 +141,7 @@ main() {
         ;;
       "NPM Package Analyzer")
         echo "Calling: node-modules-inspector"
-        pnpx node-modules-inspector
+        pnpx node-modules-inspector@latest
         break
         ;;
       esac
