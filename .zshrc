@@ -126,14 +126,9 @@ alias fz="fzf --preview 'batcat {}'"
 
 
 #PACKAGE MANAGERS
-alias d="nr dev"      # npm/pnpm/yarn run dev
-alias s="nr start"    # npm/pnpm/yarn start
-alias i="ni"          # Install a package or all packages
-alias ci="nci"        # Clean install packages
-alias u="nun"         # Uninstall a package
-alias x="nlx"         # Execute a package
-alias taze="nlx taze" # Update dependencies to latest versions
+alias taze="nlx taze latest" # Update dependencies to latest versions
 alias pi="pnpx node-modules-inspector@latest"
+alias dev="nr dev"
 
 # VSCODE/WINDSURF
 alias c="open $1 -a \"Windsurf\""
@@ -141,7 +136,7 @@ alias code="open $1 -a \"Windsurf\""
 alias ws="open $1 -a \"Windsurf\""
 #alias code="code-insiders"
 alias pdf="okular"
-alias taze="pnpx taze@latest latest"
+alias taze="pnpx taze@latest --all --force --sort time-desc latest"
 
 multipull() {
   find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} pull \;
@@ -183,3 +178,6 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+#
+ # bun
+ export PATH="/Users/saltytostitos/.bun/bin:$PATH"
