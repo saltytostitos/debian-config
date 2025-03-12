@@ -120,18 +120,34 @@ lt() {
   fi
   eza -a1lT -L 1 --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always
 }
-alias ls="eza -a1l --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always"
+alias ls="eza -a1lT -L 1 --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always"
 alias cat="bat"
 alias fz="fzf --preview 'batcat {}'"
-alias ws="windsurf"
+
+
+#PACKAGE MANAGERS
+alias d="nr dev"      # npm/pnpm/yarn run dev
+alias s="nr start"    # npm/pnpm/yarn start
+alias i="ni"          # Install a package or all packages
+alias ci="nci"        # Clean install packages
+alias u="nun"         # Uninstall a package
+alias x="nlx"         # Execute a package
+alias taze="nlx taze" # Update dependencies to latest versions
 alias pi="pnpx node-modules-inspector@latest"
-# alias code="windsurf"
-alias code="code-insiders"
-alias ws="code-insiders"
+
+# VSCODE/WINDSURF
+alias c="open $1 -a \"Windsurf\""
+alias code="open $1 -a \"Windsurf\""
+alias ws="open $1 -a \"Windsurf\""
+#alias code="code-insiders"
 alias pdf="okular"
 alias taze="pnpx taze@latest latest"
+
 multipull() {
   find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} pull \;
+}
+multipush() {
+  find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} push \;
 }
 multicheck() {
   find . -name .git -execdir bash -c echo -en "\033[1;31m"repo: "\033[1;34m";$

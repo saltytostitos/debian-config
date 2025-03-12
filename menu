@@ -43,6 +43,9 @@ OPTIONS=(
   "Yazi"
   "Neo VIM"
   "NPM Package Analyzer"
+  "Multi Pull"
+  "Multi Push"
+  "Multi Check"
 )
 main() {
 
@@ -142,6 +145,18 @@ main() {
       "NPM Package Analyzer")
         echo "Calling: node-modules-inspector"
         pnpx node-modules-inspector@latest
+        break
+        ;;
+      "Multi Pull")
+        multipull
+        break
+        ;;
+      "Multi Push")
+        multipush
+        break
+        ;;
+      "Multi Check")
+        multicheck
         break
         ;;
       esac
