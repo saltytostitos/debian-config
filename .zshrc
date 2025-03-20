@@ -179,5 +179,6 @@ case ":$PATH:" in
 esac
 # pnpm end
 #
- # bun
- export PATH="/Users/saltytostitos/.bun/bin:$PATH"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/saltytostitos/.lmstudio/bin"
