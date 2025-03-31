@@ -126,7 +126,7 @@ alias fz="fzf --preview 'batcat {}'"
 
 
 #PACKAGE MANAGERS
-alias taze="nlx taze latest" # Update dependencies to latest versions
+alias taze="taze latest" # Update dependencies to latest versions
 alias pi="pnpx node-modules-inspector@latest"
 alias dev="nr dev"
 
@@ -171,14 +171,12 @@ function y() {
 	fm -f -- "$tmp"
 }
 
-# pnpm
-export PNPM_HOME="/Users/saltytostitos/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-#
+#PNPM
+export PATH="$PATH:/Users/saltytostitos/Library/pnpm"
+
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/Users/saltytostitos/.lmstudio/bin"
+
+# Added by Windsurf - Next
+export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
