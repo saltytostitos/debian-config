@@ -126,9 +126,9 @@ alias fz="fzf --preview 'batcat {}'"
 
 
 #PACKAGE MANAGERS
-alias taze="taze latest" # Update dependencies to latest versions
+alias taze="pnpx taze@latest --all --force --sort time-desc latest"
 alias pi="pnpx node-modules-inspector@latest"
-alias dev="nr dev"
+
 
 # VSCODE/WINDSURF
 alias c="open $1 -a \"Windsurf\""
@@ -136,7 +136,14 @@ alias code="open $1 -a \"Windsurf\""
 alias ws="open $1 -a \"Windsurf\""
 #alias code="code-insiders"
 alias pdf="okular"
-alias taze="pnpx taze@latest --all --force --sort time-desc latest"
+
+# DEV SHORTCUTS
+alias dev="nr dev"
+alias build="nr build"
+alias deploy="nr deploy"
+alias cleanup="nr cleanup"
+alias preview="nr preview"
+alias dev-tunnel="cloudflared tunnel run dev-server"
 
 multipull() {
   find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} pull \;
@@ -171,12 +178,14 @@ function y() {
 	fm -f -- "$tmp"
 }
 
-#PNPM
+PNPM
 export PATH="$PATH:/Users/saltytostitos/Library/pnpm"
 
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/saltytostitos/.lmstudio/bin"
-
 # Added by Windsurf - Next
 export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
+
+#NODE
+export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
+export LDFLAGS="-L/opt/homebrew/opt/node@22/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/node@22/include"
