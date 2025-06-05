@@ -163,9 +163,6 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 #eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
-# Added by Windsurf
-export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
-
 # Yazi need this
 export EDITOR=nvim
 # Yazi y shorthand - will open Yazi and cd current directory when closing
@@ -178,14 +175,27 @@ function y() {
 	fm -f -- "$tmp"
 }
 
-PNPM
-export PATH="$PATH:/Users/saltytostitos/Library/pnpm"
-
-
-# Added by Windsurf - Next
-export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
-
 #NODE
 export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
 export LDFLAGS="-L/opt/homebrew/opt/node@22/lib"
   export CPPFLAGS="-I/opt/homebrew/opt/node@22/include"
+# Added by Windsurf
+export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
+
+# pnpm
+export PNPM_HOME="/Users/saltytostitos/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# bun completions
+[ -s "/Users/saltytostitos/.bun/_bun" ] && source "/Users/saltytostitos/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Added by Windsurf
+export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
