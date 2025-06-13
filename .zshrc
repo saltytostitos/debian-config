@@ -130,12 +130,10 @@ alias taze="pnpx taze@latest --all --force --sort time-desc latest"
 alias pi="pnpx node-modules-inspector@latest"
 
 
-# VSCODE/WINDSURF
-alias c="open $1 -a \"Windsurf\""
-alias code="open $1 -a \"Windsurf\""
-alias ws="open $1 -a \"Windsurf\""
-#alias code="code-insiders"
-alias pdf="okular"
+# VSCODE/WINDSURF/ZED
+alias c="open $1 -a \"Zed\""
+alias code="open $1 -a \"Zed\""
+alias ws="open $1 -a \"Zed\""
 
 # DEV SHORTCUTS
 alias dev="nr dev"
