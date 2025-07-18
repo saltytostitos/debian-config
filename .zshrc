@@ -1,3 +1,4 @@
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -130,10 +131,14 @@ alias taze="pnpx taze@latest --all --force --sort time-desc latest"
 alias pi="pnpx node-modules-inspector@latest"
 
 
-# VSCODE/WINDSURF/ZED
+# ZED
 alias c="open $1 -a \"Zed\""
 alias code="open $1 -a \"Zed\""
 alias ws="open $1 -a \"Zed\""
+# WINDSURF
+alias c="open $1 -a \"Windsurf\""
+alias code="open $1 -a \"Windsurf\""
+alias ws="open $1 -a \"Windsurf\""
 
 # DEV SHORTCUTS
 alias dev="nr dev"
@@ -150,14 +155,20 @@ multipush() {
   find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} push \;
 }
 multicheck() {
-  find . -name .git -execdir bash -c echo -en "\033[1;31m"repo: "\033[1;34m";$
+  find . -mindepth 1 -maxdepth 1 -type d -print0 | while IFS= read -r -d '' dir; do
+    if [[ -d "$dir/.git" ]]; then
+      echo -e "\033[1;31mRepo: \033[1;34m$(basename "$dir")\033[0m"
+      git -C "$dir" status --short
+      echo
+    fi
+  done
 }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 export PATH="/var/lib/flatpak:/opt/nvim-linux64/bin:/home/sean/.local/bin/:$PATH"
-source ~/powerlevel10k/powerlevel10k.zsh-theme
+# source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 #eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
@@ -197,3 +208,5 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Added by Windsurf
 export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
+# opencode
+export PATH=/Users/saltytostitos/.opencode/bin:$PATH
