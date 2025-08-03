@@ -132,16 +132,18 @@ alias pi="pnpx node-modules-inspector@latest"
 
 
 # ZED
-alias c="open $1 -a \"Zed\""
-alias code="open $1 -a \"Zed\""
-alias ws="open $1 -a \"Zed\""
+# alias c="open $1 -a \"Zed\""
+# alias code="open $1 -a \"Zed\""
+# alias ws="open $1 -a \"Zed\""
 # WINDSURF
 alias c="open $1 -a \"Windsurf\""
 alias code="open $1 -a \"Windsurf\""
 alias ws="open $1 -a \"Windsurf\""
 
 # DEV SHORTCUTS
+alias cleardns="sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder"
 alias dev="nr dev"
+alias dev:local="nr dev:local"
 alias build="nr build"
 alias deploy="nr deploy"
 alias cleanup="nr cleanup"
@@ -188,8 +190,6 @@ function y() {
 export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
 export LDFLAGS="-L/opt/homebrew/opt/node@22/lib"
   export CPPFLAGS="-I/opt/homebrew/opt/node@22/include"
-# Added by Windsurf
-export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
 
 # pnpm
 export PNPM_HOME="/Users/saltytostitos/Library/pnpm"
@@ -197,16 +197,10 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
+export PATH="/Users/saltytostitos/Library/pnpm/global/5/node_modules/.bin:$PATH"
+
 # pnpm end
-
-# bun completions
-[ -s "/Users/saltytostitos/.bun/_bun" ] && source "/Users/saltytostitos/.bun/_bun"
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
 
 # Added by Windsurf
 export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
-# opencode
-export PATH=/Users/saltytostitos/.opencode/bin:$PATH
+

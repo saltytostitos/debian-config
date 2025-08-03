@@ -70,6 +70,7 @@ OPTIONS=(
   "Multi Push"
   "Multi Check"
   "Dev Server Tunnel"
+  "Clear DNS"
 )
 
 # Function to print the menu with the current selection highlighted
@@ -274,6 +275,12 @@ run_app() {
   "Dev Server Tunnel")
     echo "Calling: dev-tunnel"
     dev-tunnel
+    echo "Press any key to continue..."
+    read -n 1
+    ;;
+  "Clear DNS")
+    echo "Calling: cleardns"
+    cleardns
     echo "Press any key to continue..."
     read -n 1
     ;;
