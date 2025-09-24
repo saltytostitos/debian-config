@@ -1,358 +1,446 @@
-#!/bin/bash
-# vim: set filetype=bash :
+#!/usr/bin/env node
 
-# Comment out the emulate line as it's causing issues
-# emulate -L ksh
+const chalk = require('chalk');
+const readline = require('readline');
+const { spawn } = require('child_process');
 
-# Store common terminal sequences to reduce tput calls
-TERM_CLEAR=$(tput clear)
-TERM_BOLD=$(tput bold)
-TERM_RESET=$(tput sgr0)
-TERM_HIDE_CURSOR=$(tput civis)
-TERM_SHOW_CURSOR=$(tput cnorm)
-TERM_BLACK_FG=$(tput setaf 0)
-TERM_RED_FG=$(tput setaf 1)
-TERM_GREEN_FG=$(tput setaf 2)
-TERM_YELLOW_FG=$(tput setaf 3)
-TERM_BLUE_FG=$(tput setaf 4)
-TERM_CYAN_FG=$(tput setaf 6)
-TERM_WHITE_FG=$(tput setaf 7)
-TERM_WHITE_BG=$(tput setab 7)
-TERM_RED_BG=$(tput setab 1)
-TERM_CYAN_BG=$(tput setab 6)
-TERM_CLEAR_LINE=$(tput el)
-TERM_MOVE_TO_TOP=$(tput cup 0 0)
+// ANSI escape sequences for terminal control
+const TERM_CLEAR = '\x1b[2J\x1b[H';
+const TERM_BOLD = '\x1b[1m';
+const TERM_RESET = '\x1b[0m';
+const TERM_HIDE_CURSOR = '\x1b[?25l';
+const TERM_SHOW_CURSOR = '\x1b[?25h';
+const TERM_BLACK_FG = '\x1b[30m';
+const TERM_RED_FG = '\x1b[31m';
+const TERM_GREEN_FG = '\x1b[32m';
+const TERM_YELLOW_FG = '\x1b[33m';
+const TERM_BLUE_FG = '\x1b[34m';
+const TERM_CYAN_FG = '\x1b[36m';
+const TERM_WHITE_FG = '\x1b[37m';
+const TERM_WHITE_BG = '\x1b[47m';
+const TERM_RED_BG = '\x1b[41m';
+const TERM_CYAN_BG = '\x1b[46m';
+const TERM_CLEAR_LINE = '\x1b[2K';
+const TERM_MOVE_TO_TOP = '\x1b[H';
 
-# Clean up terminal state on exit
-trap '$TERM_SHOW_CURSOR; $TERM_CLEAR; exit' EXIT INT TERM
+// Clean up terminal state on exit
+process.on('exit', () => {
+  process.stdout.write(TERM_SHOW_CURSOR);
+  process.stdout.write(TERM_CLEAR);
+});
 
-# Initialize variables
-ALL_ARGUMENTS=""
-TERM_COLS=$(tput cols)
-TERM_LINES=$(tput lines)
+process.on('SIGINT', () => {
+  process.stdout.write(TERM_SHOW_CURSOR);
+  process.stdout.write(TERM_CLEAR);
+  process.exit(0);
+});
 
-# Prompts based on list of strings. Required arguments. Will fail if no arguments are provided
-moreArgs() {
-  ALL_ARGUMENTS="" # Reset arguments for each call
-  for arg in $1; do
-    echo "${TERM_BLACK_FG}${TERM_CYAN_BG}Enter value for: $arg ${TERM_RESET}"
-    read -p "$arg: " input
-    if [[ $arg == *"-" ]]; then
-      ALL_ARGUMENTS="${ALL_ARGUMENTS} $arg"
-    fi
-    ALL_ARGUMENTS="${ALL_ARGUMENTS} $input"
+process.on('SIGTERM', () => {
+  process.stdout.write(TERM_SHOW_CURSOR);
+  process.stdout.write(TERM_CLEAR);
+  process.exit(0);
+});
 
-    if [ -z "$ALL_ARGUMENTS" ]; then
-      echo "${TERM_RED_FG}No arguments were provided for $arg"
-      sleep 2
-      return 1
-    fi
-  done
-  return 0
+// Get terminal dimensions
+function getTerminalSize() {
+  return {
+    cols: process.stdout.columns || 80,
+    lines: process.stdout.rows || 24
+  };
 }
 
-# Any items listed in the array must also be changed in the case statement
-OPTIONS=(
-  "Bottom Monitor"
-  "htop"
-  "Fly.io"
-  "Github Clone Repo"
-  "mailsy"
-  "mkcert"
-  "nmap"
-  "Pretty Ping"
-  "Speed Test"
-  "Get Weather"
-  "Yazi"
-  "Neo VIM"
-  "NPM Package Analyzer"
-  "Multi Pull"
-  "Multi Push"
-  "Multi Check"
-  "Dev Server Tunnel"
-  "Clear DNS"
-)
+// Prompts for arguments
+async function moreArgs(args) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
 
-# Function to print the menu with the current selection highlighted
-print_menu() {
-  local selected=$1
-  local size=${#OPTIONS[@]}
+  const allArguments = [];
 
-  # Save cursor position for first run
-  if [ -z "$MENU_INITIALIZED" ]; then
-    echo -n "$TERM_CLEAR"
-    MENU_INITIALIZED=1
-  else
-    # Move cursor to top-left corner instead of clearing screen
-    echo -n "$TERM_MOVE_TO_TOP"
-  fi
+  for (const arg of args) {
+    const input = await new Promise(resolve => {
+      process.stdout.write(`${TERM_BLACK_FG}${TERM_CYAN_BG}Enter value for: ${arg} ${TERM_RESET}\n`);
+      rl.question(`${arg}: `, resolve);
+    });
 
-  # Print header
-  local header="  Select an app:  "
-  local header_padding=$(( (TERM_COLS - ${#header}) / 2 ))
-  if [ $header_padding -lt 0 ]; then
-    header_padding=0
-  fi
+    if (arg.includes('-')) {
+      allArguments.push(arg);
+    }
+    allArguments.push(input);
 
-  echo "${TERM_BOLD}${TERM_WHITE_FG}${TERM_RED_BG}$(printf '%*s' "$header_padding" '')$header$(printf '%*s' "$header_padding" '')${TERM_RESET}"
-  echo ""
+    if (!input.trim()) {
+      process.stdout.write(`${TERM_RED_FG}No arguments were provided for ${arg}${TERM_RESET}\n`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      rl.close();
+      return null;
+    }
+  }
 
-  # Calculate visible range if there are many options
-  local max_visible=15
-  local start_idx=0
-  local end_idx=$((size-1))
-
-  if [ $size -gt $max_visible ]; then
-    # Adjust the visible window to show options around the selected item
-    local half_window=$(($max_visible / 2))
-    start_idx=$(($selected - $half_window))
-    end_idx=$(($selected + $half_window))
-
-    # Adjust if out of bounds
-    if [ $start_idx -lt 0 ]; then
-      start_idx=0
-      end_idx=$(($max_visible - 1))
-    fi
-    if [ $end_idx -ge $size ]; then
-      end_idx=$(($size - 1))
-      start_idx=$(($end_idx - $max_visible + 1))
-      if [ $start_idx -lt 0 ]; then
-        start_idx=0
-      fi
-    fi
-  fi
-
-  # Show scroll indicator if needed
-  if [ $start_idx -gt 0 ]; then
-    echo "  ${TERM_WHITE_FG}${TERM_BOLD}↑ More options above ${TERM_RESET}"
-  else
-    # Clear the line if no scroll indicator
-    echo "$TERM_CLEAR_LINE"
-  fi
-
-  # Display menu items with proper line clearing
-  for i in $(seq 0 $((max_visible+1))); do
-    idx=$((start_idx + i))
-    echo -n "$TERM_CLEAR_LINE"  # Clear the entire line before printing
-    if [ $idx -ge 0 ] && [ $idx -le $end_idx ]; then
-      if [ $idx -eq $selected ]; then
-        echo "${TERM_BLACK_FG}${TERM_WHITE_BG}${TERM_BOLD} → ${OPTIONS[$idx]} ${TERM_RESET}"
-      else
-        echo "  ${OPTIONS[$idx]}"
-      fi
-    else
-      echo ""  # Print empty line to overwrite previous content
-    fi
-  done
-
-  # Show scroll indicator if needed
-  echo -n "$TERM_CLEAR_LINE"  # Clear the line
-  if [ $end_idx -lt $(($size - 1)) ]; then
-    echo "  ${TERM_WHITE_FG}${TERM_BOLD}↓ More options below ${TERM_RESET}"
-  else
-    echo ""  # Print empty line
-  fi
-
-  echo ""
-  echo -n "$TERM_CLEAR_LINE"  # Clear the line
-  echo "${TERM_CYAN_FG}${TERM_BOLD}──────────────────────────────────${TERM_RESET}"
-  echo -n "$TERM_CLEAR_LINE"  # Clear the line
-  echo "${TERM_YELLOW_FG}Use ${TERM_BOLD}↑/↓${TERM_RESET}${TERM_YELLOW_FG} arrow keys to navigate and ${TERM_BOLD}Enter${TERM_RESET}${TERM_YELLOW_FG} to select. Press ${TERM_BOLD}q${TERM_RESET}${TERM_YELLOW_FG} to quit.${TERM_RESET}"
+  rl.close();
+  return allArguments;
 }
 
-run_app() {
-  local choice=$1
-  echo -n "$TERM_CLEAR"
+// Menu options
+const OPTIONS = [
+  "Bottom Monitor",
+  "htop",
+  "Fly.io",
+  "Github Clone Repo",
+  "mailsy",
+  "mkcert",
+  "nmap",
+  "Pretty Ping",
+  "Speed Test",
+  "Get Weather",
+  "Yazi",
+  "Neo VIM",
+  "NPM Package Analyzer",
+  "Multi Pull",
+  "Multi Push",
+  "Multi Check",
+  "Dev Server Tunnel",
+  "Clear DNS",
+];
 
-  # Process the selection
-  case $choice in
-  "Bottom Monitor")
-    echo "Starting Bottom Monitor..."
-    TERM=xterm-256color btm
-    ;;
-  "htop")
-    echo "Starting htop..."
-    TERM=xterm-256color htop
-    ;;
-  "Fly.io")
-    flyctl
-    echo "${TERM_RED_FG}NOT CONFIGURED -- MUST USE MANUALLY"
-    sleep 2
-    ;;
-  "Github Clone Repo")
-    if moreArgs "REPO_URL"; then
-      echo 'Calling: gh repo clone' $ALL_ARGUMENTS
-      gh repo clone $ALL_ARGUMENTS
-      echo "Press any key to continue..."
-      read -n 1
-    fi
-    ;;
-  "mailsy")
-    echo -n "$TERM_CLEAR"
-    echo "${TERM_WHITE_FG}${TERM_CYAN_BG}  Mailsy  ${TERM_RESET}"
-    echo "${TERM_YELLOW_FG}Select an option:"
-    select mailsyOpt in Generate Fetch Delete "Get Info"; do
-      case $mailsyOpt in
-      Generate)
-        mailsy g
-        break
-        ;;
-      Fetch)
-        mailsy m
-        break
-        ;;
-      Delete)
-        mailsy d
-        break
-        ;;
-      "Get Info")
-        mailsy me
-        break
-        ;;
-      esac
-    done
-    echo "Press any key to continue..."
-    read -n 1
-    ;;
-  "mkcert")
-    if moreArgs "HOST"; then
-      echo -n "$TERM_CLEAR"
-      mkcert $ALL_ARGUMENTS
-      echo "Press any key to continue..."
-      read -n 1
-    fi
-    ;;
-  "nmap")
-    nmap
-    echo "${TERM_RED_FG}NOT CONFIGURED -- MUST USE MANUALLY"
-    sleep 2
-    ;;
-  "Pretty Ping")
-    if moreArgs "HOST"; then
-      echo "Calling: prettyping" $ALL_ARGUMENTS
-      prettyping $ALL_ARGUMENTS --nounicode --nolegend
-      echo "Press any key to continue..."
-      read -n 1
-    fi
-    ;;
-  "Speed Test")
-    speedtest
-    echo "Press any key to continue..."
-    read -n 1
-    ;;
-  "Get Weather")
-    curl https://wttr.in/\?QFd
-    echo "Press any key to continue..."
-    read -n 1
-    ;;
-  "Yazi")
-    yazi
-    ;;
-  "Neo VIM")
-    nvim
-    ;;
-  "NPM Package Analyzer")
-    echo "Calling: node-modules-inspector"
-    pnpx node-modules-inspector@latest
-    echo "Press any key to continue..."
-    read -n 1
-    ;;
-  "Multi Pull")
-    multipull
-    echo "Press any key to continue..."
-    read -n 1
-    ;;
-  "Multi Push")
-    multipush
-    echo "Press any key to continue..."
-    read -n 1
-    ;;
-  "Multi Check")
-    multicheck
-    echo "Press any key to continue..."
-    read -n 1
-    ;;
-  "Dev Server Tunnel")
-    echo "Calling: dev-tunnel"
-    dev-tunnel
-    echo "Press any key to continue..."
-    read -n 1
-    ;;
-  "Clear DNS")
-    echo "Calling: cleardns"
-    cleardns
-    echo "Press any key to continue..."
-    read -n 1
-    ;;
-  esac
+// Function to print the menu
+function printMenu(selected, initialized = false) {
+  const size = OPTIONS.length;
+  const { cols } = getTerminalSize();
 
-  # Return to menu
-  return 0
+  if (!initialized) {
+    process.stdout.write(TERM_CLEAR);
+  } else {
+    process.stdout.write(TERM_MOVE_TO_TOP);
+  }
+
+  // Print header
+  const header = "  Select an app:  ";
+  const headerPadding = Math.max(0, Math.floor((cols - header.length) / 2));
+  const paddedHeader = ' '.repeat(headerPadding) + header + ' '.repeat(headerPadding);
+
+  process.stdout.write(`${TERM_BOLD}${TERM_WHITE_FG}${TERM_RED_BG}${paddedHeader}${TERM_RESET}\n\n`);
+
+  // Calculate visible range
+  const maxVisible = 15;
+  let startIdx = 0;
+  let endIdx = size - 1;
+
+  if (size > maxVisible) {
+    const halfWindow = Math.floor(maxVisible / 2);
+    startIdx = selected - halfWindow;
+    endIdx = selected + halfWindow;
+
+    if (startIdx < 0) {
+      startIdx = 0;
+      endIdx = maxVisible - 1;
+    }
+    if (endIdx >= size) {
+      endIdx = size - 1;
+      startIdx = Math.max(0, endIdx - maxVisible + 1);
+    }
+  }
+
+  // Show scroll indicator if needed
+  if (startIdx > 0) {
+    process.stdout.write(`  ${TERM_WHITE_FG}${TERM_BOLD}↑ More options above ${TERM_RESET}\n`);
+  } else {
+    process.stdout.write(`${TERM_CLEAR_LINE}\n`);
+  }
+
+  // Display menu items
+  for (let i = 0; i <= maxVisible + 1; i++) {
+    const idx = startIdx + i;
+    process.stdout.write(TERM_CLEAR_LINE);
+
+    if (idx >= 0 && idx <= endIdx) {
+      if (idx === selected) {
+        process.stdout.write(`${TERM_BLACK_FG}${TERM_WHITE_BG}${TERM_BOLD} → ${OPTIONS[idx]} ${TERM_RESET}\n`);
+      } else {
+        process.stdout.write(`  ${OPTIONS[idx]}\n`);
+      }
+    } else {
+      process.stdout.write('\n');
+    }
+  }
+
+  // Show scroll indicator if needed
+  process.stdout.write(TERM_CLEAR_LINE);
+  if (endIdx < size - 1) {
+    process.stdout.write(`  ${TERM_WHITE_FG}${TERM_BOLD}↓ More options below ${TERM_RESET}\n`);
+  } else {
+    process.stdout.write('\n');
+  }
+
+  process.stdout.write('\n');
+  process.stdout.write(TERM_CLEAR_LINE);
+  process.stdout.write(`${TERM_CYAN_FG}${TERM_BOLD}──────────────────────────────────${TERM_RESET}\n`);
+  process.stdout.write(TERM_CLEAR_LINE);
+  process.stdout.write(`${TERM_YELLOW_FG}Use ${TERM_BOLD}↑/↓${TERM_RESET}${TERM_YELLOW_FG} arrow keys to navigate and ${TERM_BOLD}Enter${TERM_RESET}${TERM_YELLOW_FG} to select. Press ${TERM_BOLD}q${TERM_RESET}${TERM_YELLOW_FG} to quit.${TERM_RESET}\n`);
 }
 
-main() {
-  local selected=0
-  local size=${#OPTIONS[@]}
-  local MENU_INITIALIZED=""
+// Function to run selected app
+async function runApp(choice) {
+  process.stdout.write(TERM_CLEAR);
 
-  # Hide cursor
-  echo -n "$TERM_HIDE_CURSOR"
+  switch (choice) {
+    case "Bottom Monitor":
+      process.stdout.write("Starting Bottom Monitor...\n");
+      spawn('btm', [], { stdio: 'inherit', env: { ...process.env, TERM: 'xterm-256color' } });
+      break;
 
-  # Display initial menu
-  print_menu $selected
+    case "htop":
+      process.stdout.write("Starting htop...\n");
+      spawn('htop', [], { stdio: 'inherit', env: { ...process.env, TERM: 'xterm-256color' } });
+      break;
 
-  # Capture key presses
-  while true; do
-    # Read a single key press
-    read -s -n 1 key
+    case "Fly.io":
+      spawn('flyctl', [], { stdio: 'inherit' });
+      process.stdout.write(`${TERM_RED_FG}NOT CONFIGURED -- MUST USE MANUALLY${TERM_RESET}\n`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      break;
 
-    # Handle special keys (arrow keys are multi-byte sequences)
-    if [[ $key = $'\x1b' ]]; then
-      # Read the rest of the escape sequence without a timeout
-      # This approach is more compatible across different systems
-      read -s -n 1 -t 1 k1
-      if [[ $k1 = '[' ]]; then
-        read -s -n 1 -t 1 k2
-        if [[ $k2 = 'A' ]]; then  # Up arrow
-          ((selected--))
-          if [ $selected -lt 0 ]; then
-            selected=$((size-1))
-          fi
-          print_menu $selected
-        elif [[ $k2 = 'B' ]]; then  # Down arrow
-          ((selected++))
-          if [ $selected -ge $size ]; then
-            selected=0
-          fi
-          print_menu $selected
-        fi
-      fi
-    elif [[ $key = "q" ]]; then
-      # Show cursor before exiting
-      echo -n "$TERM_SHOW_CURSOR"
-      echo -n "$TERM_CLEAR"
-      exit 0
-    elif [[ $key = "" ]]; then  # Enter key
-      # Show cursor during app execution
-      echo -n "$TERM_SHOW_CURSOR"
+    case "Github Clone Repo":
+      const repoArgs = await moreArgs(["REPO_URL"]);
+      if (repoArgs) {
+        process.stdout.write(`Calling: gh repo clone ${repoArgs.join(' ')}\n`);
+        const child = spawn('gh', ['repo', 'clone', ...repoArgs], { stdio: 'inherit' });
+        await new Promise(resolve => {
+          child.on('close', resolve);
+        });
+        process.stdout.write("Press any key to continue...");
+        await waitForKey();
+      }
+      break;
 
-      choice=${OPTIONS[$selected]}
-      # Clear screen before running the app
-      echo -n "$TERM_CLEAR"
-      run_app "$choice"
+    case "mailsy":
+      process.stdout.write(`${TERM_CLEAR}${TERM_WHITE_FG}${TERM_CYAN_BG}  Mailsy  ${TERM_RESET}\n`);
+      process.stdout.write(`${TERM_YELLOW_FG}Select an option:\n`);
 
-      # Reset initialization flag to force clear screen on return
-      MENU_INITIALIZED=""
+      const mailsyOptions = ["Generate", "Fetch", "Delete", "Get Info"];
+      for (let i = 0; i < mailsyOptions.length; i++) {
+        process.stdout.write(`${i + 1}) ${mailsyOptions[i]}\n`);
+      }
 
-      # Hide cursor and show menu again
-      echo -n "$TERM_HIDE_CURSOR"
-      print_menu $selected
-    fi
-  done
+      const mailsyChoice = await getUserChoice(mailsyOptions.length);
+      if (mailsyChoice !== null) {
+        const selectedOption = mailsyOptions[mailsyChoice];
+        switch (selectedOption) {
+          case "Generate":
+            spawn('mailsy', ['g'], { stdio: 'inherit' });
+            break;
+          case "Fetch":
+            spawn('mailsy', ['m'], { stdio: 'inherit' });
+            break;
+          case "Delete":
+            spawn('mailsy', ['d'], { stdio: 'inherit' });
+            break;
+          case "Get Info":
+            spawn('mailsy', ['me'], { stdio: 'inherit' });
+            break;
+        }
+      }
+
+      process.stdout.write("Press any key to continue...");
+      await waitForKey();
+      break;
+
+    case "mkcert":
+      const hostArgs = await moreArgs(["HOST"]);
+      if (hostArgs) {
+        process.stdout.write(TERM_CLEAR);
+        const child = spawn('mkcert', hostArgs, { stdio: 'inherit' });
+        await new Promise(resolve => {
+          child.on('close', resolve);
+        });
+        process.stdout.write("Press any key to continue...");
+        await waitForKey();
+      }
+      break;
+
+    case "nmap":
+      spawn('nmap', [], { stdio: 'inherit' });
+      process.stdout.write(`${TERM_RED_FG}NOT CONFIGURED -- MUST USE MANUALLY${TERM_RESET}\n`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      break;
+
+    case "Pretty Ping":
+      const pingArgs = await moreArgs(["HOST"]);
+      if (pingArgs) {
+        process.stdout.write(`Calling: prettyping ${pingArgs.join(' ')}\n`);
+        const child = spawn('prettyping', [...pingArgs, '--nounicode', '--nolegend'], { stdio: 'inherit' });
+        await new Promise(resolve => {
+          child.on('close', resolve);
+        });
+        process.stdout.write("Press any key to continue...");
+        await waitForKey();
+      }
+      break;
+
+    case "Speed Test":
+      const speedChild = spawn('speedtest', [], { stdio: 'inherit' });
+      await new Promise(resolve => {
+        speedChild.on('close', resolve);
+      });
+      process.stdout.write("Press any key to continue...");
+      await waitForKey();
+      break;
+
+    case "Get Weather":
+      spawn('curl', ['https://wttr.in/?QFd'], { stdio: 'inherit' });
+      process.stdout.write("Press any key to continue...");
+      await waitForKey();
+      break;
+
+    case "Yazi":
+      spawn('yazi', [], { stdio: 'inherit' });
+      break;
+
+    case "Neo VIM":
+      spawn('nvim', [], { stdio: 'inherit' });
+      break;
+
+    case "NPM Package Analyzer":
+      process.stdout.write("Calling: node-modules-inspector\n");
+      spawn('pnpx', ['node-modules-inspector@latest'], { stdio: 'inherit' });
+      process.stdout.write("Press any key to continue...");
+      await waitForKey();
+      break;
+
+    case "Multi Pull":
+      const pullChild = spawn('multipull', [], { stdio: 'inherit' });
+      await new Promise(resolve => {
+        pullChild.on('close', resolve);
+      });
+      process.stdout.write("Press any key to continue...");
+      await waitForKey();
+      break;
+
+    case "Multi Push":
+      const pushChild = spawn('multipush', [], { stdio: 'inherit' });
+      await new Promise(resolve => {
+        pushChild.on('close', resolve);
+      });
+      process.stdout.write("Press any key to continue...");
+      await waitForKey();
+      break;
+
+    case "Multi Check":
+      const checkChild = spawn('multicheck', [], { stdio: 'inherit' });
+      await new Promise(resolve => {
+        checkChild.on('close', resolve);
+      });
+      process.stdout.write("Press any key to continue...");
+      await waitForKey();
+      break;
+
+    case "Dev Server Tunnel":
+      process.stdout.write("Calling: dev-tunnel\n");
+      const tunnelChild = spawn('dev-tunnel', [], { stdio: 'inherit' });
+      await new Promise(resolve => {
+        tunnelChild.on('close', resolve);
+      });
+      process.stdout.write("Press any key to continue...");
+      await waitForKey();
+      break;
+
+    case "Clear DNS":
+      process.stdout.write("Calling: cleardns\n");
+      const dnsChild = spawn('cleardns', [], { stdio: 'inherit' });
+      await new Promise(resolve => {
+        dnsChild.on('close', resolve);
+      });
+      process.stdout.write("Press any key to continue...");
+      await waitForKey();
+      break;
+  }
 }
 
-# Show cursor on script exit
-trap '$TERM_SHOW_CURSOR' EXIT
+// Helper function to wait for a key press
+function waitForKey() {
+  return new Promise(resolve => {
+    process.stdin.setRawMode(true);
+    process.stdin.resume();
+    process.stdin.once('data', () => {
+      process.stdin.setRawMode(false);
+      process.stdin.pause();
+      resolve();
+    });
+  });
+}
 
-# Start the script
-main
+// Helper function to get user choice for numbered options
+function getUserChoice(max) {
+  return new Promise(resolve => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    rl.question('', (answer) => {
+      rl.close();
+      const choice = parseInt(answer) - 1;
+      if (choice >= 0 && choice < max) {
+        resolve(choice);
+      } else {
+        resolve(null);
+      }
+    });
+  });
+}
+
+// Main function
+async function main() {
+  let selected = 0;
+  const size = OPTIONS.length;
+  let initialized = false;
+
+  // Hide cursor
+  process.stdout.write(TERM_HIDE_CURSOR);
+
+  // Set up raw mode for key input
+  if (process.stdin.isTTY) {
+    process.stdin.setRawMode(true);
+  }
+  process.stdin.resume();
+  process.stdin.setEncoding('utf8');
+
+  // Display initial menu
+  printMenu(selected, initialized);
+  initialized = true;
+
+  // Handle key presses
+  process.stdin.on('data', async (key) => {
+    // Handle escape sequences for arrow keys
+    if (key === '\u001b[A') { // Up arrow
+      selected--;
+      if (selected < 0) {
+        selected = size - 1;
+      }
+      printMenu(selected, initialized);
+    } else if (key === '\u001b[B') { // Down arrow
+      selected++;
+      if (selected >= size) {
+        selected = 0;
+      }
+      printMenu(selected, initialized);
+    } else if (key === '\r' || key === '\n') { // Enter
+      process.stdout.write(TERM_SHOW_CURSOR);
+
+      const choice = OPTIONS[selected];
+      await runApp(choice);
+
+      initialized = false;
+      process.stdout.write(TERM_HIDE_CURSOR);
+      printMenu(selected, initialized);
+      initialized = true;
+    } else if (key === 'q' || key === '\u0003') { // q or Ctrl+C
+      process.stdout.write(TERM_SHOW_CURSOR);
+      process.stdout.write(TERM_CLEAR);
+      process.exit(0);
+    }
+  });
+}
+
+// Start the application
+main().catch(console.error);
