@@ -127,18 +127,18 @@ alias fz="fzf --preview 'batcat {}'"
 
 
 #PACKAGE MANAGERS
-alias taze="pnpx taze@latest --all --force --sort time-desc latest"
+alias taze="pnpx taze@latest --all --force latest"
 alias pi="pnpx node-modules-inspector@latest"
 
 
 # ZED
 # alias c="open $1 -a \"Zed\""
+# alias z="open $1 -a \"Zed\""
 # alias code="open $1 -a \"Zed\""
-# alias ws="open $1 -a \"Zed\""
 # WINDSURF
-alias c="open $1 -a \"Windsurf\""
-alias code="open $1 -a \"Windsurf\""
-alias ws="open $1 -a \"Windsurf\""
+# alias c="open $1 -a \"Windsurf\""
+# alias code="open $1 -a \"Windsurf\""
+# alias ws="open $1 -a \"Windsurf\""
 
 # DEV SHORTCUTS
 alias cleardns="sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder"
@@ -170,9 +170,6 @@ multicheck() {
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 export PATH="/var/lib/flatpak:/opt/nvim-linux64/bin:/home/sean/.local/bin/:$PATH"
-# source ~/powerlevel10k/powerlevel10k.zsh-theme
-
-#eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
 # Yazi need this
 export EDITOR=nvim
@@ -191,16 +188,21 @@ export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
 export LDFLAGS="-L/opt/homebrew/opt/node@22/lib"
   export CPPFLAGS="-I/opt/homebrew/opt/node@22/include"
 
+# BUN
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
 # pnpm
-export PNPM_HOME="/Users/saltytostitos/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-export PATH="/Users/saltytostitos/Library/pnpm/global/5/node_modules/.bin:$PATH"
+# DISABLED FOR BUN
+# export PNPM_HOME="/Users/saltytostitos/Library/pnpm"
+# case ":$PATH:" in
+#   *":$PNPM_HOME:"*) ;;
+#   *) export PATH="$PNPM_HOME:$PATH" ;;
+# esac
+# export PATH="/Users/saltytostitos/Library/pnpm/global/5/node_modules/.bin:$PATH"
 
 # pnpm end
 
 # Added by Windsurf
-export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
-
+# DISABLED FOR ZED
+# export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
