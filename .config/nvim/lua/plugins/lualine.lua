@@ -17,10 +17,37 @@ return {
       sections = {
         lualine_a = { "branch" }, -- Git branch: Clean opener
         lualine_b = { "diff" }, -- Changes: Quick glance
-        lualine_c = { "diagnostics", "tabs", "buffers" }, -- Empty: No path/diagnostics noise
+        lualine_c = {
+          "diagnostics",
+          "tabs",
+          {
+            "buffers",
+            symbols = { modified = "*" },
+            use_mode_colors = true,
+            buffers_color = { active = "lualine_a_normal" },
+            mode = 2,
+          },
+        }, -- Empty: No path/diagnostics noise
         lualine_x = { "searchcount" }, -- Empty: Skip snacks/noice/dap clutter
-        lualine_y = { "filename" }, -- File encoding: Subtle right nudge
-        lualine_z = { "filetype" }, -- Filetype: Final icon punch
+        lualine_y = {
+          {
+            "filename",
+            file_status = true,
+            path = 1,
+            shorting_target = 40,
+            symbols = {
+              modified = "*",
+            },
+          },
+        },
+        lualine_z = {
+          {
+            "filetype",
+            colored = false,
+            icon = { align = "right" },
+            icon_only = true,
+          },
+        }, -- Filetype: Final icon punch
       },
       extensions = { "neo-tree", "lazy", "fzf" },
     }
