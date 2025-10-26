@@ -124,10 +124,11 @@ lt() {
 alias ls="eza -a1lT -L 1 --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always"
 alias cat="bat"
 alias fz="fzf --preview 'batcat {}'"
+alias menu="~/dev/menu/menu/index"
 
 
 #PACKAGE MANAGERS
-alias taze="pnpx taze@latest --all --force latest"
+alias taze="taze --all --force latest"
 alias pi="pnpx node-modules-inspector@latest"
 
 
@@ -184,21 +185,19 @@ function y() {
 }
 
 #NODE
-export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
 export LDFLAGS="-L/opt/homebrew/opt/node@22/lib"
-  export CPPFLAGS="-I/opt/homebrew/opt/node@22/include"
+export CPPFLAGS="-I/opt/homebrew/opt/node@22/include"
 
 # BUN
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
+# export BUN_INSTALL="$HOME/.bun"
+# export PATH="$BUN_INSTALL/bin:$PATH"
 
 # pnpm
-# DISABLED FOR BUN
-# export PNPM_HOME="/Users/saltytostitos/Library/pnpm"
-# case ":$PATH:" in
-#   *":$PNPM_HOME:"*) ;;
-#   *) export PATH="$PNPM_HOME:$PATH" ;;
-# esac
+export PNPM_HOME="/Users/saltytostitos/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 # export PATH="/Users/saltytostitos/Library/pnpm/global/5/node_modules/.bin:$PATH"
 
 # pnpm end
@@ -206,3 +205,4 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # Added by Windsurf
 # DISABLED FOR ZED
 # export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
+export PATH="/opt/homebrew/opt/node@22/bin:$PATH"

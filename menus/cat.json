@@ -1,0 +1,144 @@
+[
+  {
+    "title": "Utils",
+    "color": "magenta",
+    "items": [
+      {
+        "title": "Bottom Monitor",
+        "description": "Rust based system monitor.",
+        "command": "btm"
+      },
+      {
+        "title": "BTop",
+        "description": "Ruse based process monitor",
+        "command": "btop"
+      },
+      {
+        "title": "h-top",
+        "command": "htop",
+        "description": "Process monitor"
+      },
+      {
+        "title": "Github",
+        "description": "GitHub command for CLI control",
+        "items": [
+          {
+            "title": "Clone Repository",
+            "command": "gh repo clone",
+            "prompt": "Please enter your github repository URL"
+          }
+        ]
+      },
+      {
+        "title": "nmap",
+        "items": [
+          {
+            "title": "",
+            "command": ""
+          }
+        ]
+      },
+      {
+        "title": "Speed Test",
+        "description": "Download/Upload speedtest.net",
+        "command": "speedtest",
+        "pause": true
+      },
+      {
+        "title": "Clear DNS",
+        "description": "Clear DNS Cache locally",
+        "command": "cleardns"
+      },
+      {
+        "title": "Ping",
+        "description": "Ping with a graph",
+        "command": "gping",
+        "prompt": "What is the URL?"
+      },
+      {
+        "title": "i Perf",
+        "items": [
+          {
+            "title": "Start Server"
+          },
+          {
+            "title": "Start Client"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Dev",
+    "color": "green",
+    "items": [
+      {
+        "title": "Lazy Git",
+        "command": "lazygit"
+      },
+      {
+        "title": "Taze Package Updater",
+        "command": "taze"
+      },
+      {
+        "title": "NPM Package Analyzer",
+        "description": "Visualize node_modules, dependencies",
+        "command": "pnpx node-modules-inspector@latest"
+      },
+      {
+        "title": "Dev Server Tunnel",
+        "description": "Cloudflare tunnels for Remote Server",
+        "command": "dev-tunnel"
+      },
+      {
+        "title": "Gemini AI Coder",
+        "command": "gemini"
+      },
+      {
+        "title": "OpenAI Codex",
+        "command": "codex"
+      },
+      {
+        "title": "OpenCode",
+        "command": "opencode"
+      },
+      {
+        "title": "Qwen Code",
+        "command": "qwen"
+      }
+    ]
+  },
+  {
+    "title": "Productivity",
+    "color": "yellow",
+    "items": [
+      {
+        "title": "Mailsy",
+        "description": "Create a disposable email address.",
+        "items": [
+          {
+            "title": "Generate a new email",
+            "command": "mailsy g"
+          },
+          {
+            "title": "Fetch messages from the inbox",
+            "command": "maisy m"
+          },
+          {
+            "title": "Delete account",
+            "command": "mailsy d"
+          },
+          {
+            "title": "Show account details",
+            "command": "mailsy me"
+          }
+        ]
+      },
+      {
+        "title": "Get Weather",
+        "command": "curl wttr.in/?QFd",
+        "description": "Terminal based weather reports"
+      }
+    ]
+  }
+]
