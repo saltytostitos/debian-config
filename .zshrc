@@ -198,8 +198,6 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-# export PATH="/Users/saltytostitos/Library/pnpm/global/5/node_modules/.bin:$PATH"
-
 # pnpm end
 
 # Added by Windsurf
