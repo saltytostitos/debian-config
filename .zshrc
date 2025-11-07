@@ -12,17 +12,7 @@ fi
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time Oh My Zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="powerlevel10k/powerlevel10k"
-
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -73,45 +63,9 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
 
 source $ZSH/oh-my-zsh.sh
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch $(uname -m)"
-
-# Set personal aliases, overriding those provided by Oh My Zsh libs,
-# plugins, and themes. Aliases can be placed here, though Oh My Zsh
-# users are encouraged to define aliases within a top-level file in
-# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
-# - $ZSH_CUSTOM/aliases.zsh
-# - $ZSH_CUSTOM/macos.zsh
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-#
-#
 
 # MY PERSONAL SHIT
 
@@ -119,27 +73,18 @@ lt() {
   if [[ -n $* ]]; then
     cd $*
   fi
-  eza -a1lT -L 1 --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always
+  eza -a1lT -L 1 --git --no-user --no-permissions --no-time --icons=always --group-directories-first --classify=always
 }
 alias ls="eza -a1lT -L 1 --git --no-user --no-permissions --no-time --icons=auto --group-directories-first --classify=always"
 alias cat="bat"
 alias fz="fzf --preview 'batcat {}'"
 alias menu="~/dev/menu/menu/index"
-
+alias v="nvim"
+alias config="nvim ~/.zshrc"
 
 #PACKAGE MANAGERS
 alias taze="taze --all --force latest"
 alias pi="pnpx node-modules-inspector@latest"
-
-
-# ZED
-# alias c="open $1 -a \"Zed\""
-# alias z="open $1 -a \"Zed\""
-# alias code="open $1 -a \"Zed\""
-# WINDSURF
-# alias c="open $1 -a \"Windsurf\""
-# alias code="open $1 -a \"Windsurf\""
-# alias ws="open $1 -a \"Windsurf\""
 
 # DEV SHORTCUTS
 alias cleardns="sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder"
@@ -150,22 +95,6 @@ alias deploy="nr deploy"
 alias cleanup="nr cleanup"
 alias preview="nr preview"
 alias dev-tunnel="cloudflared tunnel run dev-server"
-
-multipull() {
-  find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} pull \;
-}
-multipush() {
-  find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} push \;
-}
-multicheck() {
-  find . -mindepth 1 -maxdepth 1 -type d -print0 | while IFS= read -r -d '' dir; do
-    if [[ -d "$dir/.git" ]]; then
-      echo -e "\033[1;31mRepo: \033[1;34m$(basename "$dir")\033[0m"
-      git -C "$dir" status --short
-      echo
-    fi
-  done
-}
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -188,19 +117,6 @@ function y() {
 export LDFLAGS="-L/opt/homebrew/opt/node@22/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/node@22/include"
 
-# BUN
-# export BUN_INSTALL="$HOME/.bun"
-# export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH="/Users/saltytostitos/Library/pnpm:$PATH"
 
-# pnpm
-export PNPM_HOME="/Users/saltytostitos/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-# Added by Windsurf
-# DISABLED FOR ZED
-# export PATH="/Users/saltytostitos/.codeium/windsurf/bin:$PATH"
 export PATH="/opt/homebrew/opt/node@22/bin:$PATH"
