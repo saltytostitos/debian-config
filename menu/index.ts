@@ -1,5 +1,10 @@
 #!/usr/bin/env bun
-import catData from "/Users/saltytostitos/dev/menu/menu/cat.json"
+// import catData from "/Users/saltytostitos/dev/menu/menu/cat.json"
+import catData from "/home/saltytostitos/dev/menu/menu/cat.json"
+interface Arg {
+  name: string
+  description: string
+}
 
 interface MenuItem {
   title: string
@@ -8,6 +13,7 @@ interface MenuItem {
   prompt?: string
   pause?: boolean
   items?: MenuItem[]
+  args?: Arg[]
 }
 
 interface MenuCategory {
@@ -27,6 +33,7 @@ interface FlatMenuItem {
   items?: MenuItem[]
   category: string
   categoryColor?: string
+  args?: Arg[]
 }
 
 class MenuState {
@@ -171,7 +178,7 @@ class Renderer {
 }
 
 class CommandExecutor {
-  async execute(item: FlatMenuItem, promptValue?: string): Promise<void> {
+  async execute(item: FlatMenuItem, promptValue?: string, args?: string[]): Promise<void> {
     if (!item.command) return
 
     try {
@@ -180,6 +187,10 @@ class CommandExecutor {
       let command = item.command
       if (item.prompt && promptValue) {
         command = `${command} ${promptValue}`
+      }
+
+      if (args && args.length > 0) {
+        command = `${command} ${args.join(' ')}`
       }
 
       return new Promise((resolve, reject) => {
@@ -367,6 +378,22 @@ class MenuApp {
 
   private async executeCommand(item: FlatMenuItem): Promise<void> {
     let promptValue: string | undefined
+    const commandArgs: string[] = []
+
+    if (item.args && item.args.length > 0) {
+      for (const arg of item.args) {
+        const argValue = await this.getPromptInput(arg.description || `Enter ${arg.name}`)
+        if (argValue === undefined) { // User cancelled
+          if (this.submenuState && this.currentSubmenu) {
+            this.renderer.showSubmenu(this.currentSubmenu, this.submenuState)
+          } else {
+            this.renderer.render(this.state)
+          }
+          return
+        }
+        commandArgs.push(argValue)
+      }
+    }
 
     if (item.prompt) {
       promptValue = await this.getPromptInput(item.prompt)
@@ -384,7 +411,7 @@ class MenuApp {
     this.renderer.showCommandPrompt(item)
 
     try {
-      await this.commandExecutor.execute(item, promptValue)
+      await this.commandExecutor.execute(item, promptValue, commandArgs)
 
       if (item.pause === true) {
         console.log('\n✅ Command completed successfully')

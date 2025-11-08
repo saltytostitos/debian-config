@@ -4,6 +4,17 @@
     "color": "magenta",
     "items": [
       {
+        "title": "Monitor Brightness",
+        "description": "Change brightness of all monitors to a number",
+        "command": "sb",
+        "args": [
+          {
+            "name": "level",
+            "description": "What level brightness do you want?"
+          }
+        ]
+      },
+      {
         "title": "Bottom Monitor",
         "description": "Rust based system monitor.",
         "command": "btm"
