@@ -1,1 +1,19 @@
-/Users/saltytostitos/.config/zed/tasks.json
+// Static tasks configuration.
+//
+// Example:
+[
+  {
+    "label": "LazyGit",
+    "command": "lazygit",
+    "use_new_terminal": true,
+    "reveal_target": "center",
+    "hide": "always"
+  },
+  {
+    "label": "Create New Release",
+    "command": "./release.sh",
+    "use_new_terminal": false,
+    "hide": "never",
+    "args": ["$VERSION"]
+  }
+]

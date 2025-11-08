@@ -1,1 +1,24 @@
-/Users/saltytostitos/.config/zed/keymap.json
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      "cmd-g": ["task::Spawn", { "task_name": "start lazygit" }]
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "E": ["workspace::SendKeystrokes", "g _"],
+      "B": ["workspace::SendKeystrokes", "^"],
+      "alt-j": "editor::MoveLineDown",
+      "alt-k": "editor::MoveLineUp"
+    }
+  },
+  {
+    "context": "Pane > Editor && vim_mode == normal",
+    "bindings": {
+      "shift-h": "pane::ActivatePreviousItem",
+      "shift-l": "pane::ActivateNextItem"
+    }
+  }
+]
