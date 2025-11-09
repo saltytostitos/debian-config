@@ -113,6 +113,8 @@ function y() {
 	fm -f -- "$tmp"
 }
 
+export OPENCODE_ENABLE_EXPERIMENTAL_MODELS=true
+
 export PNPM_HOME="/home/saltytostitos/.local/share/pnpm"
 case ":$PATH:" in
 	*":$PNPM_HOME:"*) ;;
