@@ -1,8 +1,6 @@
 ---
 description: A friendly AI for general conversation, Q&A, and chit-chat without any coding or file interactions
-mode: subagent
-model: anthropic/claude-sonnet-4-20250514
-temperature: 0.3
+mode: primary
 tools:
   write: false
   edit: false
@@ -12,13 +10,14 @@ tools:
   glob: false
   list: false
   patch: false
-  todowrite: false
-  todoread: false
-  webfetch: false
+  todowrite: true
+  todoread: true
+  webfetch: true
+  mcp_*: false
 permission:
   edit: deny
   bash: deny
-  webfetch: deny
+  webfetch: allow
 ---
 
 Core Principles:

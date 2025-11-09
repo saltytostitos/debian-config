@@ -1,17 +1,17 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
-    "nuxt-ui": {
+    "mcp_nuxt-ui": {
       "type": "remote",
       "url": "https://ui.nuxt.com/mcp",
       "enabled": true
     },
-    "nuxt": {
+    "mcp_nuxt": {
       "url": "https://mcp.nuxt.com/sse",
       "enabled": true,
       "type": "remote"
     },
-    "chrome-devtools": {
+    "mcp_chrome-devtools": {
       "command": [
         "npx",
         "-y",
